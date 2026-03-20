@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAYA — Agenda tu cita</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0D1B2A;
+    --blue: #1A6FD4;
+    --blue-light: #3B8FE8;
+    --blue-pale: #EAF2FC;
+    --white: #FFFFFF;
+    --gray-50: #F8F9FB;
+    --gray-100: #EEF0F4;
+    --gray-300: #C4C9D4;
+    --gray-500: #7A8394;
+    --gray-700: #3D4454;
+    --green: #16A34A;
+    --green-pale: #DCFCE7;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .header-logo svg { width: 20px; height: 20px; }
+  .header-brand { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--white); letter-spacing: 0.5px; }
+  .header-tag { font-size: 12px; color: var(--gray-300); margin-left: auto; }
+
+  /* ── PERFIL CARD ── */
+  .profile-card {
+    background: var(--white);
+    margin: 20px 16px 0;
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    border: 1px solid var(--gray-100);
+  }
+  .profile-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--blue-pale);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    border: 3px solid var(--blue-pale);
+  }
+  .profile-info h1 { font-size: 19px; font-weight: 600; color: var(--navy); }
+  .profile-info .specialty {
+    font-size: 13px; color: var(--blue); font-weight: 500;
+    margin: 3px 0 8px;
+  }
+  .profile-info .desc { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .badge {
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+    background: var(--blue-pale); color: var(--blue);
+  }
+  .badge.green { background: var(--green-pale); color: var(--green); }
+
+  /* ── SECCIÓN ── */
+  .section {
+    margin: 20px 16px 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-100);
+    overflow: hidden;
+  }
+  .section-title {
+    padding: 16px 20px 12px;
+    font-size: 13px; font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  /* ── SERVICIOS ── */
+  .service-list { padding: 8px 12px; }
+  .service-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 2px solid transparent;
+  }
+  .service-item:hover { background: var(--gray-50); }
+  .service-item.selected { background: var(--blue-pale); border-color: var(--blue); }
+  .service-name { font-size: 14px; font-weight: 500; }
+  .service-meta { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .service-price { font-size: 14px; font-weight: 600; color: var(--navy); }
+  .service-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--gray-300);
+    display: flex; align-items: center; justify-content: center;
+    margin-left: 12px; flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .service-item.selected .service-check {
+    background: var(--blue); border-color: var(--blue);
+  }
+  .service-item.selected .service-check::after {
+    content: ''; width: 6px; height: 6px;
+    background: white; border-radius: 50%;
+  }
+
+  /* ── MODALIDAD ── */
+  .mode-row { display: flex; gap: 10px; padding: 14px; }
+  .mode-btn {
+    flex: 1; padding: 12px 8px; border-radius: var(--radius-sm);
+    border: 2px solid var(--gray-100); background: var(--white);
+    cursor: pointer; text-align: center; transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .mode-btn:hover { border-color: var(--blue-light); }
+  .mode-btn.selected { border-color: var(--blue); background: var(--blue-pale); }
+  .mode-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .mode-label { font-size: 13px; font-weight: 500; color: var(--navy); }
+  .mode-desc { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ── CALENDARIO ── */
+  .calendar-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px 8px;
+  }
+  .cal-nav {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid var(--gray-100); background: var(--white);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--gray-700); transition: all 0.15s;
+  }
+  .cal-nav:hover { background: var(--gray-50); border-color: var(--gray-300); }
+  .cal-month { font-size: 15px; font-weight: 600; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 0 12px 12px; }
+  .cal-dow { text-align: center; font-size: 11px; font-weight: 600; color: var(--gray-500); padding: 6px 0; text-transform: uppercase; }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 13px; cursor: pointer;
+    transition: all 0.15s; position: relative;
+  }
+  .cal-day:hover:not(.disabled):not(.empty) { background: var(--gray-100); }
+  .cal-day.today { font-weight: 600; color: var(--blue); }
+  .cal-day.today::after {
+    content: ''; width: 4px; height: 4px; background: var(--blue);
+    border-radius: 50%; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+  }
+  .cal-day.selected { background: var(--blue); color: white; font-weight: 600; }
+  .cal-day.selected::after { display: none; }
+  .cal-day.disabled { color: var(--gray-300); cursor: default; }
+  .cal-day.empty { cursor: default; }
+  .cal-day.has-slots::before {
+    content: ''; width: 4px; height: 4px; background: var(--green);
+    border-radius: 50%; position: absolute; top: 4px; right: 4px;
+  }
+  .cal-day.selected.has-slots::before { background: rgba(255,255,255,0.7); }
+
+  /* ── HORARIOS ── */
+  .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 14px; }
+  .time-btn {
+    padding: 10px 6px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-100); background: var(--white);
+    cursor: pointer; text-align: center; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; color: var(--navy);
+    transition: all 0.15s;
+  }
+  .time-btn:hover { border-color: var(--blue-light); background: var(--blue-pale); }
+  .time-btn.selected { border-color: var(--blue); background: var(--blue); color: white; }
+  .time-btn.taken { border-color: var(--gray-100); color: var(--gray-300); cursor: default; text-decoration: line-through; }
+  .no-date-msg { padding: 20px; text-align: center; font-size: 13px; color: var(--gray-500); }
+
+  /* ── FORMULARIO ── */
+  .form-body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-500); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input, .form-group textarea {
+    width: 100%; padding: 11px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-100); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--navy); background: var(--white);
+    outline: none; transition: border 0.15s;
+  }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--blue); }
+  .form-group textarea { resize: none; height: 70px; }
+  .address-row { display: none; }
+  .address-row.visible { display: block; }
+
+  /* ── RESUMEN ── */
+  .summary-box {
+    background: var(--gray-50); border-radius: var(--radius-sm);
+    padding: 14px; margin: 0 14px; border: 1px solid var(--gray-100);
+    font-size: 13px; display: none;
+  }
+  .summary-box.visible { display: block; }
+  .summary-row { display: flex; justify-content: space-between; padding: 4px 0; }
+  .summary-label { color: var(--gray-500); }
+  .summary-value { font-weight: 500; color: var(--navy); }
+
+  /* ── BOTÓN PRINCIPAL ── */
+  .btn-container { padding: 16px 16px 32px; }
+  .btn-confirm {
+    width: 100%; padding: 16px;
+    background: var(--blue); color: white;
+    border: none; border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px;
+  }
+  .btn-confirm:hover:not(:disabled) { background: var(--blue-light); transform: translateY(-1px); }
+  .btn-confirm:disabled { background: var(--gray-300); cursor: default; transform: none; }
+
+  /* ── MODAL CONFIRMACIÓN ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(13,27,42,0.6); z-index: 100;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 20px;
+    padding: 32px 24px; max-width: 380px; width: 100%;
+    text-align: center; animation: popIn 0.3s ease;
+  }
+  @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--green-pale); margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+  }
+  .modal h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .modal p { font-size: 14px; color: var(--gray-500); line-height: 1.5; margin-bottom: 20px; }
+  .modal-detail {
+    background: var(--gray-50); border-radius: var(--radius-sm);
+    padding: 14px; text-align: left; font-size: 13px; margin-bottom: 20px;
+  }
+  .modal-detail .row { display: flex; gap: 8px; padding: 3px 0; }
+  .modal-detail .lbl { color: var(--gray-500); min-width: 80px; }
+  .modal-detail .val { font-weight: 500; }
+  .btn-whatsapp {
+    width: 100%; padding: 14px;
+    background: #25D366; color: white;
+    border: none; border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none; margin-bottom: 10px;
+  }
+  .btn-whatsapp:hover { background: #1ebe5a; }
+  .btn-new { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--gray-500); cursor: pointer; padding: 8px; }
+  .btn-new:hover { color: var(--navy); }
+
+  /* ── POWERED ── */
+  .powered {
+    text-align: center; padding: 8px 0 4px;
+    font-size: 11px; color: var(--gray-300);
+  }
+  .powered span { color: var(--blue); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+      <rect x="3" y="4" width="18" height="16" rx="3"/>
+      <path d="M16 2v4M8 2v4M3 10h18"/>
+      <circle cx="16" cy="16" r="3" stroke="white" stroke-width="1.5" fill="none"/>
+      <path d="M16 14.5V16l1 1" stroke="white" stroke-width="1.5"/>
+    </svg>
+  </div>
+  <span class="header-brand">MAYA</span>
+  <span class="header-tag">MVP Beta</span>
+</div>
+
+<!-- PERFIL -->
+<div class="profile-card">
+  <div class="profile-avatar" id="avatarBox">👩‍⚕️</div>
+  <div class="profile-info">
+    <h1 id="providerName">Dra. Carolina Ruiz</h1>
+    <div class="specialty" id="providerSpecialty">Fisioterapeuta • Pasto, Nariño</div>
+    <div class="desc" id="providerDesc">Atención integral a domicilio y consultorio. Más de 8 años de experiencia en rehabilitación física y deportiva.</div>
+    <div class="badges">
+      <span class="badge green" id="badge1">✓ Verificada</span>
+      <span class="badge" id="badge2">Domicilio</span>
+      <span class="badge" id="badge3">Consultorio</span>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICIOS -->
+<div class="section">
+  <div class="section-title">Selecciona un servicio</div>
+  <div class="service-list" id="serviceList"></div>
+</div>
+
+<!-- MODALIDAD -->
+<div class="section">
+  <div class="section-title">Modalidad de atención</div>
+  <div class="mode-row">
+    <button class="mode-btn selected" id="modeHome" onclick="selectMode('home')">
+      <span class="mode-icon">🏠</span>
+      <div class="mode-label">A domicilio</div>
+      <div class="mode-desc">El profesional va donde tú estás</div>
+    </button>
+    <button class="mode-btn" id="modeOffice" onclick="selectMode('office')">
+      <span class="mode-icon">🏥</span>
+      <div class="mode-label">Consultorio</div>
+      <div class="mode-desc">Cra. 25 #18-40, Pasto</div>
+    </button>
+  </div>
+</div>
+
+<!-- CALENDARIO -->
+<div class="section">
+  <div class="section-title">Elige una fecha</div>
+  <div class="calendar-header">
+    <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+    <span class="cal-month" id="calMonth"></span>
+    <button class="cal-nav" onclick="changeMonth(1)">›</button>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+</div>
+
+<!-- HORARIOS -->
+<div class="section" id="timeSection">
+  <div class="section-title">Elige un horario</div>
+  <div id="timeContent"><div class="no-date-msg">Primero selecciona una fecha</div></div>
+</div>
+
+<!-- FORMULARIO -->
+<div class="section">
+  <div class="section-title">Tus datos</div>
+  <div class="form-body">
+    <div class="form-group">
+      <label>Nombre completo</label>
+      <input type="text" id="clientName" placeholder="Ej: María Torres" oninput="updateSummary()">
+    </div>
+    <div class="form-group">
+      <label>WhatsApp</label>
+      <input type="tel" id="clientPhone" placeholder="Ej: 3001234567" oninput="updateSummary()">
+    </div>
+    <div class="form-group address-row" id="addressRow">
+      <label>Dirección de domicilio</label>
+      <input type="text" id="clientAddress" placeholder="Ej: Calle 15 #22-10, barrio La Rosa" oninput="updateSummary()">
+    </div>
+    <div class="form-group">
+      <label>Nota (opcional)</label>
+      <textarea id="clientNote" placeholder="Cuéntanos brevemente el motivo de tu cita..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- RESUMEN -->
+<div class="summary-box" id="summaryBox">
+  <div class="summary-row"><span class="summary-label">Servicio</span><span class="summary-value" id="sumService">—</span></div>
+  <div class="summary-row"><span class="summary-label">Modalidad</span><span class="summary-value" id="sumMode">—</span></div>
+  <div class="summary-row"><span class="summary-label">Fecha y hora</span><span class="summary-value" id="sumDateTime">—</span></div>
+  <div class="summary-row"><span class="summary-label">Valor</span><span class="summary-value" id="sumPrice">—</span></div>
+</div>
+
+<!-- BOTÓN -->
+<div class="btn-container">
+  <button class="btn-confirm" id="btnConfirm" onclick="confirmBooking()" disabled>
+    Confirmar cita por WhatsApp
+  </button>
+  <div class="powered">Powered by <span>MAYA</span> — Beta gratuita</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-icon">✅</div>
+    <h2>¡Cita lista!</h2>
+    <p>Tu solicitud está lista. Al tocar el botón se abrirá WhatsApp con el mensaje ya escrito.</p>
+    <div class="modal-detail" id="modalDetail"></div>
+    <a class="btn-whatsapp" id="waLink" href="#" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Enviar por WhatsApp
+    </a>
+    <button class="btn-new" onclick="resetForm()">Agendar otra cita</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIGURACIÓN DEL PRESTADOR — EDITA AQUÍ
+// ══════════════════════════════════════════
+const CONFIG = {
+  provider: {
+    name: "Dra. Carolina Ruiz",
+    specialty: "Fisioterapeuta • Pasto, Nariño",
+    description: "Atención integral a domicilio y consultorio. Más de 8 años de experiencia en rehabilitación física y deportiva.",
+    emoji: "👩‍⚕️",
+    whatsapp: "573001234567", // número con código de país, sin +
+    officeAddress: "Cra. 25 #18-40, Pasto"
+  },
+  services: [
+    { id: 1, name: "Consulta inicial", duration: "60 min", price: "$80.000" },
+    { id: 2, name: "Sesión de rehabilitación", duration: "45 min", price: "$65.000" },
+    { id: 3, name: "Masaje terapéutico", duration: "50 min", price: "$70.000" },
+    { id: 4, name: "Valoración postural", duration: "30 min", price: "$50.000" },
+  ],
+  // Horarios disponibles por día de la semana (0=dom, 1=lun...6=sab)
+  availableSlots: {
+    1: ["08:00","09:00","10:00","11:00","14:00","15:00","16:00"],
+    2: ["08:00","09:00","10:00","14:00","15:00"],
+    3: ["08:00","09:00","10:00","11:00","14:00","15:00","16:00"],
+    4: ["08:00","09:00","10:00","14:00","15:00"],
+    5: ["09:00","10:00","11:00","14:00","15:00"],
+    6: ["09:00","10:00","11:00"],
+  },
+  // Simular algunas citas ya tomadas: "YYYY-MM-DD_HH:MM"
+  takenSlots: []
+};
+// ══════════════════════════════════════════
+
+// Estado
+let state = {
+  service: null,
+  mode: 'home',
+  date: null,
+  time: null,
+};
+
+const MONTHS = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DAYS = ["D","L","M","M","J","V","S"];
+
+let calCurrent = new Date();
+calCurrent.setDate(1);
+
+// Inicializar
+document.getElementById('providerName').textContent = CONFIG.provider.name;
+document.getElementById('providerSpecialty').textContent = CONFIG.provider.specialty;
+document.getElementById('providerDesc').textContent = CONFIG.provider.description;
+document.getElementById('avatarBox').textContent = CONFIG.provider.emoji;
+document.querySelector('#modeOffice .mode-desc').textContent = CONFIG.provider.officeAddress;
+
+// Render servicios
+function renderServices() {
+  const list = document.getElementById('serviceList');
+  list.innerHTML = CONFIG.services.map(s => `
+    <div class="service-item" id="srv${s.id}" onclick="selectService(${s.id})">
+      <div>
+        <div class="service-name">${s.name}</div>
+        <div class="service-meta">${s.duration}</div>
+      </div>
+      <div style="display:flex;align-items:center">
+        <span class="service-price">${s.price}</span>
+        <div class="service-check"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectService(id) {
+  state.service = CONFIG.services.find(s => s.id === id);
+  document.querySelectorAll('.service-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById('srv' + id).classList.add('selected');
+  updateSummary(); checkConfirm();
+}
+
+function selectMode(mode) {
+  state.mode = mode;
+  document.getElementById('modeHome').classList.toggle('selected', mode === 'home');
+  document.getElementById('modeOffice').classList.toggle('selected', mode === 'office');
+  document.getElementById('addressRow').classList.toggle('visible', mode === 'home');
+  updateSummary(); checkConfirm();
+}
+
+// Calendario
+function renderCalendar() {
+  const month = calCurrent.getMonth();
+  const year = calCurrent.getFullYear();
+  document.getElementById('calMonth').textContent = MONTHS[month] + ' ' + year;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  let html = DAYS.map(d => `<div class="cal-dow">${d}</div>`).join('');
+  for (let i=0; i<firstDay; i++) html += `<div class="cal-day empty"></div>`;
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const date = new Date(year, month, d);
+    const dow = date.getDay();
+    const isPast = date < today;
+    const hasSlots = CONFIG.availableSlots[dow] && CONFIG.availableSlots[dow].length > 0;
+    const isToday = date.getTime() === today.getTime();
+    const dateStr = formatDate(date);
+    const isSelected = state.date === dateStr;
+
+    let cls = 'cal-day';
+    if (isPast || !hasSlots) cls += ' disabled';
+    else cls += ' has-slots';
+    if (isToday) cls += ' today';
+    if (isSelected) cls += ' selected';
+
+    const click = (!isPast && hasSlots) ? `onclick="selectDate('${dateStr}',${dow})"` : '';
+    html += `<div class="${cls}" ${click}>${d}</div>`;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+}
+
+function changeMonth(dir) {
+  calCurrent.setMonth(calCurrent.getMonth() + dir);
+  renderCalendar();
+}
+
+function formatDate(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function formatDateDisplay(str) {
+  const [y,m,d] = str.split('-');
+  const date = new Date(y, m-1, d);
+  const dows = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+  return dows[date.getDay()] + ' ' + d + ' de ' + MONTHS[m-1];
+}
+
+function selectDate(dateStr, dow) {
+  state.date = dateStr;
+  state.time = null;
+  renderCalendar();
+  renderSlots(dateStr, dow);
+  updateSummary(); checkConfirm();
+}
+
+function renderSlots(dateStr, dow) {
+  const slots = CONFIG.availableSlots[dow] || [];
+  if (!slots.length) {
+    document.getElementById('timeContent').innerHTML = '<div class="no-date-msg">No hay horarios para este día</div>';
+    return;
+  }
+  const html = `<div class="time-grid">${slots.map(t => {
+    const key = dateStr + '_' + t;
+    const taken = CONFIG.takenSlots.includes(key);
+    return `<button class="time-btn ${taken?'taken':''}" ${taken?'disabled':''} onclick="selectTime('${t}')">${t}</button>`;
+  }).join('')}</div>`;
+  document.getElementById('timeContent').innerHTML = html;
+}
+
+function selectTime(t) {
+  state.time = t;
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+  event.target.classList.add('selected');
+  updateSummary(); checkConfirm();
+}
+
+function updateSummary() {
+  const name = document.getElementById('clientName').value.trim();
+  const phone = document.getElementById('clientPhone').value.trim();
+  const allSet = state.service && state.date && state.time && name && phone;
+
+  const box = document.getElementById('summaryBox');
+  box.classList.toggle('visible', !!(state.service || state.date || state.time));
+
+  document.getElementById('sumService').textContent = state.service ? state.service.name : '—';
+  document.getElementById('sumMode').textContent = state.mode === 'home' ? 'A domicilio' : 'Consultorio';
+  document.getElementById('sumDateTime').textContent = (state.date && state.time) ? formatDateDisplay(state.date) + ' · ' + state.time : '—';
+  document.getElementById('sumPrice').textContent = state.service ? state.service.price : '—';
+}
+
+function checkConfirm() {
+  const name = document.getElementById('clientName').value.trim();
+  const phone = document.getElementById('clientPhone').value.trim();
+  const ok = state.service && state.date && state.time && name && phone;
+  document.getElementById('btnConfirm').disabled = !ok;
+}
+
+document.getElementById('clientName').addEventListener('input', checkConfirm);
+document.getElementById('clientPhone').addEventListener('input', checkConfirm);
+
+function confirmBooking() {
+  const name = document.getElementById('clientName').value.trim();
+  const phone = document.getElementById('clientPhone').value.trim();
+  const address = document.getElementById('clientAddress').value.trim();
+  const note = document.getElementById('clientNote').value.trim();
+
+  const modeTxt = state.mode === 'home' ? 'A domicilio' + (address ? ' — ' + address : '') : 'Consultorio (' + CONFIG.provider.officeAddress + ')';
+  const dateDisplay = formatDateDisplay(state.date);
+
+  // Modal
+  document.getElementById('modalDetail').innerHTML = `
+    <div class="row"><span class="lbl">Paciente</span><span class="val">${name}</span></div>
+    <div class="row"><span class="lbl">Servicio</span><span class="val">${state.service.name}</span></div>
+    <div class="row"><span class="lbl">Fecha</span><span class="val">${dateDisplay} · ${state.time}</span></div>
+    <div class="row"><span class="lbl">Modalidad</span><span class="val">${modeTxt}</span></div>
+    <div class="row"><span class="lbl">Valor</span><span class="val">${state.service.price}</span></div>
+  `;
+
+  // Mensaje WhatsApp
+  let msg = `Hola ${CONFIG.provider.name.split(' ')[0]}! 👋\n\n*Solicitud de cita — MAYA*\n\n`;
+  msg += `👤 *Paciente:* ${name}\n`;
+  msg += `📱 *WhatsApp:* ${phone}\n`;
+  msg += `🗓 *Servicio:* ${state.service.name}\n`;
+  msg += `📅 *Fecha:* ${dateDisplay} a las ${state.time}\n`;
+  msg += `📍 *Modalidad:* ${modeTxt}\n`;
+  if (note) msg += `📝 *Nota:* ${note}\n`;
+  msg += `💰 *Valor:* ${state.service.price}\n\n`;
+  msg += `Por favor confirma mi cita. ¡Gracias!`;
+
+  const waUrl = `https://wa.me/${CONFIG.provider.whatsapp}?text=${encodeURIComponent(msg)}`;
+  document.getElementById('waLink').href = waUrl;
+  document.getElementById('modalOverlay').classList.add('visible');
+}
+
+function resetForm() {
+  state = { service: null, mode: 'home', date: null, time: null };
+  document.getElementById('clientName').value = '';
+  document.getElementById('clientPhone').value = '';
+  document.getElementById('clientAddress').value = '';
+  document.getElementById('clientNote').value = '';
+  document.getElementById('modalOverlay').classList.remove('visible');
+  document.querySelectorAll('.service-item').forEach(e => e.classList.remove('selected'));
+  document.getElementById('modeHome').classList.add('selected');
+  document.getElementById('modeOffice').classList.remove('selected');
+  document.getElementById('addressRow').classList.remove('visible');
+  document.getElementById('timeContent').innerHTML = '<div class="no-date-msg">Primero selecciona una fecha</div>';
+  document.getElementById('summaryBox').classList.remove('visible');
+  document.getElementById('btnConfirm').disabled = true;
+  renderCalendar();
+}
+
+// Init
+renderServices();
+renderCalendar();
+</script>
+</body>
+</html>
